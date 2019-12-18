@@ -1,9 +1,5 @@
 # Gender-Detector
-Detecting 
 
-import soundfile as sf
-#pip install soundfile 
+## Requirements 
+sudo apt-get install libportaudio2
 
-#def get_data():
-wav_file = '001_K.wav'
-input_data, f_s = sf.read(wav_file)

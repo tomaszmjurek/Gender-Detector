@@ -1,0 +1,16 @@
+w - sampleRate
+n = w * 3
+signal
+nframe = len(signal)
+
+n nie dluzsze niz nframe
+
+
+85 .. 255 biezemy pod uwage
+
+avg_freq
+<175 Male
+>=175 Female
+
+
+https://github.com/rybmat/gender_recognition/blob/master/glosy.py
