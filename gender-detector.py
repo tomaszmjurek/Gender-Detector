@@ -5,6 +5,7 @@ from scipy import signal
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.io import wavfile
+# import pandas as pd
 import PitchSpectralHps
 
 path = 'train/0'
@@ -17,22 +18,30 @@ def play_audio(audio, f_s):
 #def get_data():
 files = ['01_K', '02_M', '03_K', '04_M', '05M', '06_K', '07_M']
 
-for i in range(7):
+for i in range(4):
     wav_file = path + files[i] + '.wav'
     data, rate = sf.read(wav_file, dtype='float32')
 
     #play_audio(input_data, f_s)
 
     # w, signal_in = wavfile.read(path + '001_K.wav') #not working
-    # if [s[0] == s[1] for s in data]:
 
-    # data = [s[0] for s in data]  # mono ze stereo, ale jak jest mono wczesniej to blad, trzeba bedzie poprawic
+    if str(type(data[0])) == '<class \'numpy.ndarray\'>':
+        # print('yea')
+        data = [s[0] for s in data]  # mono ze stereo
+    #     print(len(data[0])) # liczba kolumn
 
     # Spectogram sposob 1
-    frequencies, times, spectrogram = signal.spectrogram(data, rate) #  np.array(data) jesli nie dziala
+    nperseg = 1024
+    noverlap = nperseg/8
+    nfft = nperseg
+
+    frequencies, times, spectrogram = signal.spectrogram(np.array(data), rate, nperseg=nperseg, noverlap=noverlap, nfft=nfft) #  np.array(data) jesli nie dziala
     x = PitchSpectralHps.PitchSpectralHps(spectrogram, rate)
-    # print(frequencies)
-    print(str(files[i]) + ' spectrum mean: ' + str(np.mean(x)))
+
+    result = np.where(x == np.amax(x)) # index of max element in array  # zwraca kilka indeksow jesli takie same wartosci
+    freq = result[0] * rate / nfft
+    print(str(files[i] + ' ' + str(freq)))
 
 # plt.pcolormesh(times, frequencies, spectrogram)
 # plt.imshow(spectrogram)
