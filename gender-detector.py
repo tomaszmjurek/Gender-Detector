@@ -14,15 +14,15 @@ def play_audio(audio, f_s):
     status = sd.wait()
 
 #def get_data():
-# wav_file = path + '001_K.wav'
-# input, f_s = sf.read(wav_file, dtype='float32')
+wav_file = path + '001_K.wav'
+data, rate = sf.read(wav_file, dtype='float32')
 
 #play_audio(input_data, f_s)
 
-w, signal_in = wavfile.read(path + '001_K.wav')
-signal_in = [s[0] for s in signal_in] # mono ze stereo
+# w, signal_in = wavfile.read(path + '001_K.wav') #not working
+data = [s[0] for s in data]  # mono ze stereo
 
-frequencies, times, spectrogram = signal.spectrogram(signal_in, w)
+frequencies, times, spectrogram = signal.spectrogram(data, rate)
 
 plt.pcolormesh(times, frequencies, spectrogram)
 plt.imshow(spectrogram)
