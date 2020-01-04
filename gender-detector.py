@@ -32,7 +32,7 @@ for i in range(4):
     #     print(len(data[0])) # liczba kolumn
 
     # Spectogram sposob 1
-    nperseg = 1024
+    nperseg = 2048 #1024
     noverlap = nperseg/8
     nfft = nperseg
 
@@ -40,7 +40,7 @@ for i in range(4):
     x = PitchSpectralHps.PitchSpectralHps(spectrogram, rate)
 
     result = np.where(x == np.amax(x)) # index of max element in array  # zwraca kilka indeksow jesli takie same wartosci
-    freq = result[0] * rate / nfft
+    freq = (result[0] * rate) / nfft # np.size(x) #nfft
     print(str(files[i] + ' ' + str(freq)))
 
 # plt.pcolormesh(times, frequencies, spectrogram)
