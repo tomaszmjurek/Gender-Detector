@@ -14,22 +14,24 @@ def play_audio(audio, f_s):
     status = sd.wait()
 
 #def get_data():
-wav_file = path + '001_K.wav'
+wav_file = path + '004_M.wav'
 data, rate = sf.read(wav_file, dtype='float32')
 
 #play_audio(input_data, f_s)
 
 # w, signal_in = wavfile.read(path + '001_K.wav') #not working
-data = [s[0] for s in data]  # mono ze stereo
+data = [s[0] for s in data]  # mono ze stereo, ale jak jest mono wczesniej to blad, trzeba bedzie poprawic
 
-frequencies, times, spectrogram = signal.spectrogram(data, rate)
 
+# Spectogram sposob 1
+frequencies, times, spectrogram = signal.spectrogram(np.array(data), rate) #  np.array zeby dzialalo
 plt.pcolormesh(times, frequencies, spectrogram)
 plt.imshow(spectrogram)
 plt.ylabel('Frequency [Hz]')
 plt.xlabel('Time [sec]')
 plt.show()
 
+# Wlasny dzwiek do testowania
 # fs = 10e3
 # N = 1e5
 # amp = 2 * np.sqrt(2)
@@ -40,8 +42,9 @@ plt.show()
 # noise = np.random.normal(scale=np.sqrt(noise_power), size=time.shape)
 # noise *= np.exp(-time/5)
 # x = carrier + noise
-#
-# f, t, Sxx = signal.spectrogram(x, fs)
+
+# Spectogram sposob 2
+# f, t, Sxx = signal.spectrogram(np.array(data), rate)
 # plt.pcolormesh(t, f, Sxx)
 # plt.ylabel('Frequency [Hz]')
 # plt.xlabel('Time [sec]')
