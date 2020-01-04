@@ -5,8 +5,9 @@ from scipy import signal
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.io import wavfile
+import PitchSpectralHps
 
-path = 'train/'
+path = 'train/0'
 
 def play_audio(audio, f_s):
     sd.play(audio, f_s)
@@ -14,22 +15,30 @@ def play_audio(audio, f_s):
     status = sd.wait()
 
 #def get_data():
-wav_file = path + '004_M.wav'
-data, rate = sf.read(wav_file, dtype='float32')
+files = ['01_K', '02_M', '03_K', '04_M', '05M', '06_K', '07_M']
 
-#play_audio(input_data, f_s)
+for i in range(7):
+    wav_file = path + files[i] + '.wav'
+    data, rate = sf.read(wav_file, dtype='float32')
 
-# w, signal_in = wavfile.read(path + '001_K.wav') #not working
-data = [s[0] for s in data]  # mono ze stereo, ale jak jest mono wczesniej to blad, trzeba bedzie poprawic
+    #play_audio(input_data, f_s)
 
+    # w, signal_in = wavfile.read(path + '001_K.wav') #not working
+    # if [s[0] == s[1] for s in data]:
 
-# Spectogram sposob 1
-frequencies, times, spectrogram = signal.spectrogram(np.array(data), rate) #  np.array zeby dzialalo
-plt.pcolormesh(times, frequencies, spectrogram)
-plt.imshow(spectrogram)
-plt.ylabel('Frequency [Hz]')
-plt.xlabel('Time [sec]')
-plt.show()
+    # data = [s[0] for s in data]  # mono ze stereo, ale jak jest mono wczesniej to blad, trzeba bedzie poprawic
+
+    # Spectogram sposob 1
+    frequencies, times, spectrogram = signal.spectrogram(data, rate) #  np.array(data) jesli nie dziala
+    x = PitchSpectralHps.PitchSpectralHps(spectrogram, rate)
+    # print(frequencies)
+    print(str(files[i]) + ' spectrum mean: ' + str(np.mean(x)))
+
+# plt.pcolormesh(times, frequencies, spectrogram)
+# plt.imshow(spectrogram)
+# plt.ylabel('Frequency [Hz]')
+# plt.xlabel('Time [sec]')
+# plt.show()
 
 # Wlasny dzwiek do testowania
 # fs = 10e3
