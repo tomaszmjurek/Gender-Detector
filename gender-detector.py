@@ -3,8 +3,6 @@ import sounddevice as sd
 import AvgFrequency
 from os import listdir
 
-path = 'voices/'
-
 
 def play_audio(audio, rate):
     sd.play(audio, rate)
@@ -18,12 +16,16 @@ def detectGender(freq):
         return 'K'
 
 
-files = [f for f in listdir(path)]
+path = 'voices/'
+files = [f for f in listdir(path)]  # All files in dir
 
 files_num = 0
 errors = 0
-freq_min = []
-freq_max = []
+real_k = 0
+real_m = 0
+test_k = 0
+test_m = 0
+
 for file in files:
     wav_file = path + file
     try:
@@ -40,12 +42,19 @@ for file in files:
     sex = detectGender(frequency)
     print(wav_file + ': sex: ' + sex + ', freq: ' + str(frequency))
 
-    # if
-    if frequency > freq_max: freq_max = frequency
-    if frequency < freq_min: freq_min = frequency
+    if sex == 'M':
+        test_m += 1
+    else:
+        test_k += 1
+
+    if wav_file[-5] == 'M':
+        real_m += 1
+    else:
+        real_k += 1
+
     files_num += 1
 
 print('Processed: ' + str(files_num))
 print('Errors: ' + str(errors))
-print('M: max=' + freq_max[0] + 'min=' + freq_min)
-print('M: max=' + freq_max[0] + 'min=' + freq_min)
+print('Recognized women: ' + str(test_k) + '/' + str(real_k))
+print('Recognized men: ' + str(test_m) + '/' + str(real_m))
