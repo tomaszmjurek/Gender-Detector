@@ -20,34 +20,32 @@ def detectGender(freq):
 
 files = [f for f in listdir(path)]
 
-
+files_num = 0
+errors = 0
+freq_min = []
+freq_max = []
 for file in files:
     wav_file = path + file
     try:
-        data, rate = sf.read(wav_file)  # , dtype='float32')
+        data, rate = sf.read(wav_file)
     except:
+        errors += 1
         print("Error reading file!")
         continue
 
-    # w, signal_in = wavfile.read(path + '001_K.wav') #not working
-
     if str(type(data[0])) == '<class \'numpy.ndarray\'>':
-        data = [s[0] for s in data]  # mono ze stereo
+        data = [s[0] for s in data]  # Changing mono to stereo
 
     frequency = AvgFrequency.avgFrequency(data, rate)
     sex = detectGender(frequency)
     print(wav_file + ': sex: ' + sex + ', freq: ' + str(frequency))
 
+    # if
+    if frequency > freq_max: freq_max = frequency
+    if frequency < freq_min: freq_min = frequency
+    files_num += 1
 
-# plt.pcolormesh(times, frequencies, spectrogram)
-# plt.imshow(spectrogram)
-# plt.ylabel('Frequency [Hz]')
-# plt.xlabel('Time [sec]')
-# plt.show()
-
-# Spectogram sposob 2
-# f, t, Sxx = signal.spectrogram(np.array(data), rate)
-# plt.pcolormesh(t, f, Sxx)
-# plt.ylabel('Frequency [Hz]')
-# plt.xlabel('Time [sec]')
-# plt.show()
+print('Processed: ' + str(files_num))
+print('Errors: ' + str(errors))
+print('M: max=' + freq_max[0] + 'min=' + freq_min)
+print('M: max=' + freq_max[0] + 'min=' + freq_min)
