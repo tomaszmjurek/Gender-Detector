@@ -1,7 +1,8 @@
 import soundfile as sf
 import sounddevice as sd
-import AvgFrequency
+import Highest_spectrum
 from os import listdir
+import sys
 
 
 def play_audio(audio, rate):
@@ -9,68 +10,67 @@ def play_audio(audio, rate):
     sd.wait()  # Wait for audio to stop
 
 
-def detectGender(freq):
+def detect_gender(freq):
     if freq < 200:
         return 'M'
     else:
         return 'K'
 
 
-path = 'voices/'
-files = [f for f in listdir(path)]  # All files in dir
+def process_all():
+    k_t = 0
+    k_f = 0
+    m_t = 0
+    m_f = 0
+    files_num = 0
 
-files_num = 0
-errors = 0
-real_k = 0
-real_m = 0
-test_k = 0
-test_m = 0
-k_t = 0
-k_f = 0
-m_t = 0
-m_f = 0
+    path = 'voices/'
+    files = [f for f in listdir(path)]  # All files in dir
 
-for file in files:
-    wav_file = path + file
+    for file in files:
+        wav_file = path + file
+        sex, frequency = process(wav_file)
+        real_sex = wav_file[-5]
+
+        # Matrix of mistakes
+        if sex == 'M' and real_sex == 'M':
+            m_t += 1
+        elif sex == 'M' and real_sex == 'K':
+            m_f += 1
+        elif sex == 'K' and real_sex == 'K':
+            k_t += 1
+        elif sex == 'K' and real_sex == 'M':
+            k_f += 1
+
+        files_num += 1
+    print('Processed: ' + str(files_num))
+
+    print('m_t = ' + str(m_t) + ' m_f = ' + str(m_f))
+    print('k_t = ' + str(k_t) + ' k_f = ' + str(k_f))
+
+
+def process(wav_file):
     try:
         data, rate = sf.read(wav_file)
     except:
-        errors += 1
         print("Error reading file!")
-        continue
+        return
 
     if str(type(data[0])) == '<class \'numpy.ndarray\'>':
         data = [s[0] for s in data]  # Changing mono to stereo
 
-    frequency = AvgFrequency.avgFrequency(data, rate)
-    sex = detectGender(frequency)
-    print(wav_file + ': sex: ' + sex + ', freq: ' + str(frequency))
+    frequency = Highest_spectrum.highest_spectrum(data, rate)
+    sex = detect_gender(frequency)
+    # print(wav_file + ': sex: ' + sex + ', x_freq: ' + str(frequency))
+    print(str(sex))
+    return sex, frequency
 
-    real_sex = wav_file[-5]
 
-    if sex == 'M' and real_sex == 'M':
-        m_t += 1
-    elif sex == 'M' and real_sex == 'K':
-        m_f += 1
-    elif sex == 'K' and real_sex == 'K':
-        k_t += 1
-    elif sex == 'K' and real_sex == 'M':
-        k_f += 1
-    # if sex == 'M':
-    #     test_m += 1
-    # else:
-    #     test_k += 1
-    #
-    # if wav_file[-5] == 'M':
-    #     real_m += 1
-    # else:
-    #     real_k += 1
+def main():
+    # process_all()
+    process(sys.argv[1])
 
-    files_num += 1
 
-print('Processed: ' + str(files_num))
-print('Errors: ' + str(errors))
-print('m_t = ' + str(m_t) + ' m_f = ' + str(m_f))
-print('k_t = ' + str(k_t) + ' k_f = ' + str(k_f))
-# print('Recognized women: ' + str(test_k) + '/' + str(real_k))
-# print('Recognized men: ' + str(test_m) + '/' + str(real_m))
+if __name__ == "__main__":
+    main()
+
