@@ -1,5 +1,6 @@
 # Gender-Detector
 
-## Requirements 
-sudo apt-get install libportaudio2
+## Running
+source ENV/bin/activate
+(ENV) python gender-detector.py voices/K001.wav
 
